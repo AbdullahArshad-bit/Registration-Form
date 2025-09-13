@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi Step Form with Progress Bar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 450px;
+    }
+
+    
+    .progressbar {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+   
+    .line {
+      position: absolute;
+      top: 15px;
+      left: 12.5%;
+      width: 75%;
+      height: 4px;
+      background: #ccc;
+      z-index: 0;
+    }
+
+   
+    .progress {
+      position: absolute;
+      top: 15px;
+      left: 12.5%;
+      height: 4px;
+      background: teal;
+      width: 0%;
+      z-index: 1;
+      transition: 0.3s ease;
+    }
+
+    .step {
+      text-align: center;
+      width: 25%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #ccc;
+      margin: 0 auto 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .circle.active {
+      background: teal;
+    }
+
+    .label {
+      font-size: 14px;
+      color: #555;
+    }
+
+    
+    .form-step {
+      display: none;
+    }
+    .form-step.active {
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: teal;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btns {
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Registration Form</h2>
+
+    <div class="progressbar">
+      <div class="line"></div>
+      <div class="progress" id="progress"></div>
+
+      <div class="step">
+        <div class="circle active">1</div>
+        <div class="label">Username</div>
+      </div>
+      <div class="step">
+        <div class="circle">2</div>
+        <div class="label">Contact</div>
+      </div>
+      <div class="step">
+        <div class="circle">3</div>
+        <div class="label">ID</div>
+      </div>
+      <div class="step">
+        <div class="circle">4</div>
+        <div class="label">Password</div>
+      </div>
+    </div>
+<div class="regForm">
+    
+      
+      <div class="form-step active">
+        <input type="text" placeholder="Enter username" required>
+        <input type="text" placeholder="Enter position" required>
+        <div class="btns">
+          <span></span>
+          <button type="button" onclick="next()">Next</button>
+        </div>
+      </div>
+
+      <div class="form-step">
+        <input type="email" placeholder="Enter email" required>
+        <input type="text" placeholder="Enter phone number" required>
+        <div class="btns">
+          <button type="button" onclick="prev()">Previous</button>
+          <button type="button" onclick="next()">Next</button>
+        </div>
+      </div>
+
+     
+      <div class="form-step">
+        <input type="date" required>
+        <input type="text" placeholder="Enter National ID" required>
+        <div class="btns">
+          <button type="button" onclick="prev()">Previous</button>
+          <button type="button" onclick="next()">Next</button>
+        </div>
+      </div>
+
+      
+      <div class="form-step">
+        <input type="password" placeholder="Enter password" required>
+        <input type="password" placeholder="Confirm password" required>
+        <div class="btns">
+          <button type="button" onclick="prev()">Previous</button>
+          <button type="submit">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var step = 0;
+    var formSteps = document.getElementsByClassName("form-step");
+    var circles = document.getElementsByClassName("circle");
+    var progress = document.getElementById("progress");
+
+    function showStep() {
+     
+      for (var i = 0; i < formSteps.length; i++) {
+        formSteps[i].classList.remove("active");
+        circles[i].classList.remove("active");
+      }
+
+     
+      formSteps[step].classList.add("active");
+
+      
+      for (var j = 0; j <= step; j++) {
+        circles[j].classList.add("active");
+      }
+
+     
+      progress.style.width = (step / (formSteps.length -1)) * 75 + "%";
+    }
+
+    function next() {
+      if (step < formSteps.length - 1) {
+        step++;
+        showStep();
+      }
+    }
+
+    function prev() {
+      if (step > 0) {
+        step--;
+        showStep();
+      }
+    }
+
+    document.getElementById("regForm").onsubmit = function(e){
+      e.preventDefault();
+
+    };
+
+    
+    showStep();
+  </script>
+</body>
+</html>
