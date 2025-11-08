@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi Step Form with Progress Bar</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi Step Form with Firebase</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,16 +20,12 @@
       box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
       width: 450px;
     }
-
-    
     .progressbar {
       position: relative;
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
     }
-
-   
     .line {
       position: absolute;
       top: 15px;
@@ -39,8 +35,6 @@
       background: #ccc;
       z-index: 0;
     }
-
-   
     .progress {
       position: absolute;
       top: 15px;
@@ -51,14 +45,12 @@
       z-index: 1;
       transition: 0.3s ease;
     }
-
     .step {
       text-align: center;
       width: 25%;
       position: relative;
       z-index: 2;
     }
-
     .circle {
       width: 30px;
       height: 30px;
@@ -72,23 +64,15 @@
       font-weight: bold;
       transition: 0.3s ease;
     }
-
     .circle.active {
       background: teal;
     }
-
     .label {
       font-size: 14px;
       color: #555;
     }
-
-    
-    .form-step {
-      display: none;
-    }
-    .form-step.active {
-      display: block;
-    }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
     input {
       width: 100%;
       padding: 10px;
@@ -105,10 +89,7 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .btns {
-      display: flex;
-      justify-content: space-between;
-    }
+    .btns { display: flex; justify-content: space-between; }
   </style>
 </head>
 <body>
@@ -119,29 +100,16 @@
       <div class="line"></div>
       <div class="progress" id="progress"></div>
 
-      <div class="step">
-        <div class="circle active">1</div>
-        <div class="label">Username</div>
-      </div>
-      <div class="step">
-        <div class="circle">2</div>
-        <div class="label">Contact</div>
-      </div>
-      <div class="step">
-        <div class="circle">3</div>
-        <div class="label">ID</div>
-      </div>
-      <div class="step">
-        <div class="circle">4</div>
-        <div class="label">Password</div>
-      </div>
+      <div class="step"><div class="circle active">1</div><div class="label">Username</div></div>
+      <div class="step"><div class="circle">2</div><div class="label">Contact</div></div>
+      <div class="step"><div class="circle">3</div><div class="label">ID</div></div>
+      <div class="step"><div class="circle">4</div><div class="label">Password</div></div>
     </div>
-<div class="regForm">
-    
-      
+
+    <form id="regForm" class="regForm">
       <div class="form-step active">
-        <input type="text" placeholder="Enter username" required>
-        <input type="text" placeholder="Enter position" required>
+        <input type="text" id="username" placeholder="Enter username" required />
+        <input type="text" id="position" placeholder="Enter position" required />
         <div class="btns">
           <span></span>
           <button type="button" onclick="next()">Next</button>
@@ -149,82 +117,105 @@
       </div>
 
       <div class="form-step">
-        <input type="email" placeholder="Enter email" required>
-        <input type="text" placeholder="Enter phone number" required>
+        <input type="email" id="email" placeholder="Enter email" required />
+        <input type="text" id="phone" placeholder="Enter phone number" required />
         <div class="btns">
           <button type="button" onclick="prev()">Previous</button>
           <button type="button" onclick="next()">Next</button>
         </div>
       </div>
 
-     
       <div class="form-step">
-        <input type="date" required>
-        <input type="text" placeholder="Enter National ID" required>
+        <input type="date" id="dob" required />
+        <input type="text" id="nationalId" placeholder="Enter National ID" required />
         <div class="btns">
           <button type="button" onclick="prev()">Previous</button>
           <button type="button" onclick="next()">Next</button>
         </div>
       </div>
 
-      
       <div class="form-step">
-        <input type="password" placeholder="Enter password" required>
-        <input type="password" placeholder="Confirm password" required>
+        <input type="password" id="password" placeholder="Enter password" required />
+        <input type="password" id="confirmPassword" placeholder="Confirm password" required />
         <div class="btns">
           <button type="button" onclick="prev()">Previous</button>
           <button type="submit">Submit</button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 
-  <script>
-    var step = 0;
-    var formSteps = document.getElementsByClassName("form-step");
-    var circles = document.getElementsByClassName("circle");
-    var progress = document.getElementById("progress");
+  <!-- ✅ Firebase App + Firestore (v9 modules via CDN) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // 🔹 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3Yiq4EjtKcvlbiDsmsRNc_vctVmHIi5g",
+      authDomain: "registration-app-cbee8.firebaseapp.com",
+      projectId: "registration-app-cbee8",
+      storageBucket: "registration-app-cbee8.firebasestorage.app",
+      messagingSenderId: "35095142409",
+      appId: "1:35095142409:web:69dfd2e74d76693e8658d8",
+      measurementId: "G-LTS14SEHHK"
+    };
+
+    // 🔹 Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔹 Multi-step Form Logic
+    let step = 0;
+    const formSteps = document.getElementsByClassName("form-step");
+    const circles = document.getElementsByClassName("circle");
+    const progress = document.getElementById("progress");
 
     function showStep() {
-     
-      for (var i = 0; i < formSteps.length; i++) {
+      for (let i = 0; i < formSteps.length; i++) {
         formSteps[i].classList.remove("active");
         circles[i].classList.remove("active");
       }
-
-     
       formSteps[step].classList.add("active");
-
-      
-      for (var j = 0; j <= step; j++) {
-        circles[j].classList.add("active");
-      }
-
-     
-      progress.style.width = (step / (formSteps.length -1)) * 75 + "%";
+      for (let j = 0; j <= step; j++) circles[j].classList.add("active");
+      progress.style.width = (step / (formSteps.length - 1)) * 75 + "%";
     }
 
-    function next() {
-      if (step < formSteps.length - 1) {
-        step++;
-        showStep();
-      }
-    }
-
-    function prev() {
-      if (step > 0) {
-        step--;
-        showStep();
-      }
-    }
-
-    document.getElementById("regForm").onsubmit = function(e){
-      e.preventDefault();
-
+    window.next = function() {
+      if (step < formSteps.length - 1) { step++; showStep(); }
     };
 
-    
+    window.prev = function() {
+      if (step > 0) { step--; showStep(); }
+    };
+
     showStep();
+
+    // 🔹 Save data to Firestore on submit
+    document.getElementById("regForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        username: document.getElementById("username").value,
+        position: document.getElementById("position").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        dob: document.getElementById("dob").value,
+        nationalId: document.getElementById("nationalId").value,
+        password: document.getElementById("password").value,
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        await addDoc(collection(db, "users"), data);
+        alert("✅ Registration successful! Data saved in Firestore.");
+        document.getElementById("regForm").reset();
+        step = 0;
+        showStep();
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    });
   </script>
 </body>
 </html>
